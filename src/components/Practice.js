@@ -1,7 +1,8 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
+import DictionariesTable from "./BrowseDictionaries/DictionariesTable";
+import AskUser from "./AskUser";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,47 +26,39 @@ const useStyles = makeStyles(theme => ({
 
 function Practice() {
     const classes = useStyles();
-
+    const axios = require('axios').default;
     const [usersDictionaries, setUsersDictionaries] = React.useState([]);
+    const [dictionary, setDictionary] = React.useState({});
+    const [isPracticing, setIsPracticing] = React.useState(false);
+
     React.useEffect(() => {
-        async function fetchData() {
-            const request = new Request('http://localhost:8080/findUsersDictionaries?id=2', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                redirect: 'manual',
+
+        axios.get("http://localhost:8080/findUsersDictionaries?id=2")
+            .then(function (response) {
+                setUsersDictionaries(response.data);
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
             });
-            const response = await fetch(request);
-            const data = await response.json();
-            setUsersDictionaries(data);
-        };
-        fetchData();
     }, []);
-        /*async function fetchData()  {
-            const res = await fetch("http://localhost:8080/findUsersDictionaries?id=2");
-            res
-                .json()
-                .then(res => setUsersDictionaries(res))
-                .catch(err => console.log(err));
-        };
-        fetchData();
-    }, [])*/
+
+    const chooseDictionary = (dictionary, isPracticing) => {
+        setDictionary(dictionary);
+        setIsPracticing(isPracticing);
+    };
 
     return (
         <div className={classes.background}>
             <div className={classes.content}>
-                <Typography variant="h1">
-                    Fishky
-                </Typography>
-                <Typography variant='h3'>
-                    Practice
-                </Typography>
+                <DictionariesTable dictionaries={usersDictionaries} chooseDictionary={chooseDictionary}/>
                 <Button onClick={e => {console.log(usersDictionaries)}}>
-
+                    dunno
                 </Button>
+                {isPracticing && <AskUser dictionary={dictionary}/>}
             </div>
         </div>
     );
 }
+
 export default Practice;
