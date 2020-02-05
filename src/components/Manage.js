@@ -1,6 +1,7 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography/Typography";
+import EditDictionariesTable from "./EditDictionariesTable";
+import Grid from "@material-ui/core/Grid/Grid";
 
 
 const useStyles = makeStyles(theme => ({
@@ -19,7 +20,7 @@ const useStyles = makeStyles(theme => ({
         fontSize: 40,
         padding: theme.spacing(3),
         fontWeight: 600,
-    },
+    }
 }));
 
 function Manage() {
@@ -28,12 +29,14 @@ function Manage() {
     return (
         <div className={classes.background}>
             <div className={classes.content}>
-                <Typography variant="h1">
-                    Fishky
-                </Typography>
-                <Typography variant='h3'>
-                    Manage
-                </Typography>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <EditDictionariesTable/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <EditDictionariesTable/>
+                    </Grid>
+                </Grid>
             </div>
         </div>
     );
