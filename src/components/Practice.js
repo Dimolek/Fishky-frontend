@@ -1,8 +1,8 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core";
-import Button from "@material-ui/core/Button/Button";
 import DictionariesTable from "./BrowseDictionaries/DictionariesTable";
 import AskUser from "./AskUser";
+import Paper from "@material-ui/core/Paper/Paper";
 
 
 const useStyles = makeStyles(theme => ({
@@ -30,6 +30,7 @@ function Practice() {
     const [usersDictionaries, setUsersDictionaries] = React.useState([]);
     const [dictionary, setDictionary] = React.useState({});
     const [isPracticing, setIsPracticing] = React.useState(false);
+    const [index, setIndex] = React.useState(0);
 
     React.useEffect(() => {
 
@@ -51,11 +52,12 @@ function Practice() {
     return (
         <div className={classes.background}>
             <div className={classes.content}>
-                <DictionariesTable dictionaries={usersDictionaries} chooseDictionary={chooseDictionary}/>
-                <Button onClick={e => {console.log(usersDictionaries)}}>
-                    dunno
-                </Button>
-                {isPracticing && <AskUser dictionary={dictionary}/>}
+                <Paper elevation={10} >
+                    <DictionariesTable dictionaries={usersDictionaries} chooseDictionary={chooseDictionary}/>
+                </Paper>
+                <Paper elevation={15}>
+                    {isPracticing && <AskUser dictionary={dictionary} index={index}/>}
+                </Paper>
             </div>
         </div>
     );

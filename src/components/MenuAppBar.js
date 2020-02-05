@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
     },
     bar: {
+        color: 'white',
         backgroundColor: "#D13434"
     },
 }));

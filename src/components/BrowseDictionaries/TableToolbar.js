@@ -28,14 +28,22 @@ const useToolbarStyles = makeStyles(theme => ({
     },
 }));
 
+export function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 export default function EnhancedTableToolbar(props) {
     const classes = useToolbarStyles();
     const { selected, dictionaries } = props;
     const axios = require('axios').default;
 
     const getChosenDictionary = id => {
-        axios.get("http://localhost:8080/findDictionaryById?id=".concat(id)) // <-------------------------- tu
+        axios.get("http://localhost:8080/findDictionaryById?id=".concat(id))
             .then(function (response) {
+                shuffleArray(response.data.translations);
                 props.chooseDictionary(response.data, true);
                 console.log(response.data);
             })
