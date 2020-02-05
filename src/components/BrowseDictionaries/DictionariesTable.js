@@ -7,9 +7,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import EnhancedTableToolbar from "./TableToolbar";
 import EnhancedTableHead from "./TableHead";
+import Radio from "@material-ui/core/Radio/Radio";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -64,7 +64,7 @@ export default function DictionariesTable(props) {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('name');
-    const [selected, setSelected] = React.useState([]);
+    const [selected, setSelected] = React.useState('none');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const {dictionaries} = props;
@@ -73,26 +73,6 @@ export default function DictionariesTable(props) {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-    };
-
-    const handleClick = (event, dictionary) => {
-        const selectedIndex = selected.indexOf(dictionary.name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, dictionary.name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        setSelected(newSelected);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -104,14 +84,22 @@ export default function DictionariesTable(props) {
         setPage(0);
     };
 
-    const isSelected = name => selected.indexOf(name) !== -1;
+    const handleRadioChange = event => {
+        props.chooseDictionary(null, false);
+        setSelected(event.target.value);
+    };
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, dictionaries.length - page * rowsPerPage);
 
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar selected={selected} dictionaries={dictionaries} chooseDictionary={props.chooseDictionary}/>
+                <EnhancedTableToolbar
+                    selected={selected}
+                    dictionaries={dictionaries}
+                    chooseDictionary={props.chooseDictionary}
+                    setSelected={setSelected}
+                />
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -130,24 +118,25 @@ export default function DictionariesTable(props) {
                             {stableSort(dictionaries, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name);
+                                    const isItemSelected = row.name;
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row)}
-                                            role="checkbox"
+                                            role="radio"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
                                             key={row.name}
-                                            selected={isItemSelected}
+                                            selected={selected === isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                />
+                                                <Radio
+                                                    checked={selected === isItemSelected}
+                                                    onChange={handleRadioChange}
+                                                    value={isItemSelected}
+                                                    name={isItemSelected}
+                                                    inputProps={{'aria-labelledby': labelId}}/>
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}

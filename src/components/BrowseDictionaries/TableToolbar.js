@@ -5,7 +5,6 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import CheckIcon from '@material-ui/icons/Check';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import React from "react";
 
 const useToolbarStyles = makeStyles(theme => ({
@@ -56,32 +55,33 @@ export default function EnhancedTableToolbar(props) {
         let selectedDictionary = {};
 
         dictionaries.map(dictionary => {
-            if (dictionary.name === selected[0])
+            if (dictionary.name === selected)
                 selectedDictionary = dictionary;
         });
         getChosenDictionary(selectedDictionary.id);
+        props.setSelected('none');
     };
 
     return (
         <Toolbar
             className={clsx(classes.root, {
-                [classes.highlight]: selected.length > 0,
+                [classes.highlight]: selected !== 'none',
             })}
         >
             <Typography className={classes.title} variant="h6" id="tableTitle">
                 Your dictionaries
             </Typography>
 
-            {selected.length > 0 ? (
-                <Tooltip title="Execute">
+            {selected !== 'none' ? (
+                <Tooltip title="Click to practice">
                     <IconButton aria-label="execute" onClick={handleExecute}>
                         <CheckIcon />
                     </IconButton>
                 </Tooltip>
             ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
+                <Tooltip title="Choose dictionary">
+                    <IconButton aria-label="check">
+                        <CheckIcon color='disabled'/>
                     </IconButton>
                 </Tooltip>
             )}
