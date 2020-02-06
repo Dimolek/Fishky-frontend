@@ -1,24 +1,24 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 
-export default function EditDictionariesTable(props) {
+export default function EditTranslationsTable(props) {
 
     const [state, setState] = React.useState({
         columns: [
-            {title: 'Name', field: 'name'},
-            {title: 'Language', field: 'language'}
+            {title: 'Word', field: 'word'},
+            {title: 'Translated', field: 'translated'}
         ],
-        data: props.dictionaries
+        data: props.dictionary.translations
     });
 
     const axios = require('axios').default;
 
-    const saveNewDictionary = newData => {
+    const saveNewTranslation = newData => {
 
-        axios.post("http://localhost:8080/addDictionary", {
-            name: newData.name,
-            language: newData.language,
-            userId: 2
+        axios.post("http://localhost:8080/addTranslation", {
+            word: newData.word,
+            translated: newData.translated,
+            dictionaryId: props.dictionary.id
         }).then(function (response) {
             setState(prevState => {
                 const data = [...prevState.data];
@@ -30,36 +30,42 @@ export default function EditDictionariesTable(props) {
         });
     };
 
-    const loadTranslations = dictionaryId => {
+    const deleteTranslation = oldData => {
 
-        props.setTranslationsLoaded(false);
-        console.log(dictionaryId);
+        axios.post("http://localhost:8080/deleteTranslationById", {
+            id: oldData.id
+        }).then(function (response) {
+            console.log(response.data);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    };
 
-        axios.get("http://localhost:8080/findDictionaryById?id=".concat(dictionaryId))
-            .then(function (response) {
-                console.log(response.data);
-                props.setDictionary(response.data);
-                props.setTranslationsLoaded(true);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+    const modifyTranslation = newData => {
+
+        axios.put("http://localhost:8080/modifyTranslation", {
+            id: newData.id,
+            word: newData.word,
+            translated: newData.translated,
+            dictionaryId: props.dictionary.id
+        }).then(function (response) {
+            console.log(response.data, 'modify pierwszy then')
+        }).catch(function (error) {
+            console.log(error);
+        });
     };
 
     return (
         <MaterialTable
-            title="Your dictionaries"
+            title={props.dictionary.name}
             columns={state.columns}
             data={state.data}
-            onRowClick={(e, r) => {
-                loadTranslations(r.id);
-            }}
             editable={{
                 onRowAdd: newData =>
                     new Promise(resolve => {
                         setTimeout(() => {
                             resolve();
-                            saveNewDictionary(newData);
+                            saveNewTranslation(newData);
                         }, 600);
                     }),
                 onRowUpdate: (newData, oldData) =>
@@ -67,6 +73,8 @@ export default function EditDictionariesTable(props) {
                         setTimeout(() => {
                             resolve();
                             if (oldData) {
+                                console.log(oldData, newData, 'stara i nowa');
+                                modifyTranslation(newData);
                                 setState(prevState => {
                                     const data = [...prevState.data];
                                     data[data.indexOf(oldData)] = newData;
@@ -79,6 +87,7 @@ export default function EditDictionariesTable(props) {
                     new Promise(resolve => {
                         setTimeout(() => {
                             resolve();
+                            deleteTranslation(oldData);
                             setState(prevState => {
                                 const data = [...prevState.data];
                                 data.splice(data.indexOf(oldData), 1);
