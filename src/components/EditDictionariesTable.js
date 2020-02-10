@@ -11,6 +11,8 @@ export default function EditDictionariesTable(props) {
         data: props.dictionaries
     });
 
+    const [currentDictionaryId, setCurrentDictionaryId] = React.useState(0);
+
     const axios = require('axios').default;
 
     const saveNewDictionary = newData => {
@@ -35,7 +37,7 @@ export default function EditDictionariesTable(props) {
         axios.post("http://localhost:8080/deleteDictionaryById", {
             id: oldData.id
         }).then(function (response) {
-            props.setTranslationsLoaded(false);
+            if(currentDictionaryId === oldData.id) props.setTranslationsLoaded(false);
             console.log(response.data);
         }).catch(function (error) {
             console.log(error);
@@ -50,7 +52,7 @@ export default function EditDictionariesTable(props) {
             language: newData.language,
             userId: newData.userId
         }).then(function (response) {
-            props.setTranslationsLoaded(false);
+            if(currentDictionaryId === newData.id) props.setTranslationsLoaded(false);
             console.log(response.data, 'modify pierwszy then')
         }).catch(function (error) {
             console.log(error);
@@ -65,6 +67,7 @@ export default function EditDictionariesTable(props) {
         axios.get("http://localhost:8080/findDictionaryById?id=".concat(dictionaryId))
             .then(function (response) {
                 console.log(response.data);
+                setCurrentDictionaryId(dictionaryId);
                 props.setDictionary(response.data);
                 props.setTranslationsLoaded(true);
             })

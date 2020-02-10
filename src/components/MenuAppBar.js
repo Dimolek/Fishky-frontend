@@ -99,6 +99,9 @@ export default function MenuAppBar() {
                                         <ListItemLink to="/Manage" primary="Manage flashcards" />
                                         <ListItemLink to="/" primary="Logout" onClick={handleClose}/>
                                     </List>*/}
+                                    <Link to='/' style={{ textDecoration: 'none', display: 'block'}}>
+                                        <MenuItem onClick={handleClose}>Home</MenuItem>
+                                    </Link>
                                     <Link to='/Manage' style={{ textDecoration: 'none', display: 'block'}}>
                                         <MenuItem onClick={handleClose}>Manage flashcards</MenuItem>
                                     </Link>
@@ -129,7 +132,12 @@ export default function MenuAppBar() {
                                     open={open}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>Login</MenuItem>
+                                    <Link to='/Login' style={{ textDecoration: 'none', display: 'block'}}>
+                                        <MenuItem onClick={handleClose}>Login</MenuItem>
+                                    </Link>
+                                    <Link to='/Register' style={{ textDecoration: 'none', display: 'block'}}>
+                                        <MenuItem onClick={handleClose}>Create account</MenuItem>
+                                    </Link>
                                 </Menu>
                             </div>
                         )}
