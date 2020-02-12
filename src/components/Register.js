@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles(theme => ({
@@ -77,20 +77,31 @@ const CssTextField = withStyles({
     },
 })(TextField);
 
-const handleSubmit = event => {
-    const axios = require('axios').default;
-
-    axios.post("http://localhost:8080/addUser", {
-        //todo
-    }).then(function (response) {
-        console.log('sukces');
-    }).catch(function (error) {
-        console.log(error);
-    });
-}
-
 function Register() {
+
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [confirmPassword, setConfirmPassword] = React.useState('');
+
+    const saveNewUser = (event) => {
+
+        const axios = require('axios').default;
+        event.preventDefault();
+
+        axios.post("http://localhost:8080/addUser", {
+            username,
+            password,
+            confirmPassword
+        }).then(function (response) {
+            console.log('Registration successful');
+            history.push("/Login");
+        }).catch(function (error) {
+            console.log(error.response.data.message);
+        });
+    };
+
     const classes = useStyles();
+    const history = useHistory();
 
     return (
         <div className={classes.background}>
@@ -116,19 +127,10 @@ function Register() {
                                     id="username"
                                     label="Username"
                                     autoFocus
+                                    onChange={e => {
+                                        setUsername(e.target.value)
+                                    }}
                                 />
-                                {/* <TextField
-                                        autoComplete="Username"
-                                        name="username"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="username"
-                                        label="Username"
-                                        autoFocus
-                                        //value={this.state.userName}
-                                        //onChange={this.handleUserName}
-                                    />*/}
                             </Grid>
                             <Grid item xs={12}>
                                 <CssTextField
@@ -140,18 +142,10 @@ function Register() {
                                     label="Password"
                                     type="password"
                                     id="password"
+                                    onChange={e => {
+                                        setPassword(e.target.value)
+                                    }}
                                 />
-                                {/*<TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        //value={this.state.password}
-                                        //onChange={this.handlePassword}
-                                    />*/}
                             </Grid>
                             <Grid item xs={12}>
                                 <CssTextField
@@ -161,8 +155,11 @@ function Register() {
                                     fullWidth
                                     name="confirmpassword"
                                     label="Confirm Password"
-                                    type="confirmpassword"
+                                    type="password"
                                     id="confirmpassword"
+                                    onChange={e => {
+                                        setConfirmPassword(e.target.value)
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -172,7 +169,7 @@ function Register() {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-                            onClick={handleSubmit}
+                            onClick={saveNewUser}
                         >
                             Register
                         </Button>
@@ -184,11 +181,9 @@ function Register() {
                             </Grid>
                         </Grid>
                     </form>
-
                 </Paper>
             </Container>
         </div>
     );
 }
-
 export default Register;
