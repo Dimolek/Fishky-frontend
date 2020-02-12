@@ -105,18 +105,6 @@ function Login() {
                                     label="Username"
                                     autoFocus
                                 />
-                                {/* <TextField
-                                        autoComplete="Username"
-                                        name="username"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="username"
-                                        label="Username"
-                                        autoFocus
-                                        //value={this.state.userName}
-                                        //onChange={this.handleUserName}
-                                    />*/}
                             </Grid>
                             <Grid item xs={12}>
                                 <CssTextField
@@ -129,17 +117,6 @@ function Login() {
                                     type="password"
                                     id="password"
                                 />
-                                {/*<TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        //value={this.state.password}
-                                        //onChange={this.handlePassword}
-                                    />*/}
                             </Grid>
                         </Grid>
                         <Button
