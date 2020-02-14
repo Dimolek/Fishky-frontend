@@ -132,6 +132,9 @@ export default function MenuAppBar() {
                                     open={open}
                                     onClose={handleClose}
                                 >
+                                    <Link to='/' style={{ textDecoration: 'none', display: 'block'}}>
+                                        <MenuItem onClick={handleClose}>Home</MenuItem>
+                                    </Link>
                                     <Link to='/Login' style={{ textDecoration: 'none', display: 'block'}}>
                                         <MenuItem onClick={handleClose}>Login</MenuItem>
                                     </Link>

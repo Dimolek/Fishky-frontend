@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
+import {useHistory} from "react-router-dom";
 
 
 const useStyles = makeStyles(theme => ({
@@ -80,6 +81,30 @@ const CssTextField = withStyles({
 function Login() {
     const classes = useStyles();
 
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
+    const history = useHistory();
+
+    const SignIn = (event) => {
+
+        const axios = require('axios').default;
+        event.preventDefault();
+
+        axios.post("http://localhost:8080/login", {
+            username,
+            password
+        }).then(function (response) {
+            console.log('Login successful');
+            const token = response.headers.authorization;
+            console.log(token);
+            sessionStorage.setItem('token', token);
+            history.push("/");
+        }).catch(function (error) {
+            console.log(error.response.data.message);
+        });
+    };
+
     return (
         <div className={classes.background}>
             <Container component="main" maxWidth="xs" style={{'paddingTop': 70}}>
@@ -104,6 +129,9 @@ function Login() {
                                     id="username"
                                     label="Username"
                                     autoFocus
+                                    onChange={e => {
+                                        setUsername(e.target.value)
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -116,6 +144,9 @@ function Login() {
                                     label="Password"
                                     type="password"
                                     id="password"
+                                    onChange={e => {
+                                        setPassword(e.target.value)
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -125,7 +156,7 @@ function Login() {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-                            //onClick={this.createUser}
+                            onClick={SignIn}
                         >
                             Login
                         </Button>
