@@ -36,11 +36,11 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         alignItems: 'center',
         backgroundColor: "#FFFFFF",
-        borderRadius:'22px',
-        paddingRight:'25px',
-        paddingLeft:'25px',
-        paddingBottom:'15px',
-        paddingTop:'5px'
+        borderRadius: '22px',
+        paddingRight: '25px',
+        paddingLeft: '25px',
+        paddingBottom: '15px',
+        paddingTop: '5px'
     },
     avatar: {
         margin: theme.spacing(1),
@@ -85,22 +85,44 @@ function Login() {
     const [password, setPassword] = React.useState('');
 
     const history = useHistory();
+    const axios = require('axios').default;
 
-    const SignIn = (event) => {
+    const signIn = (event) => {
 
-        const axios = require('axios').default;
+
+        const jwtDecode = require('jwt-decode');
         event.preventDefault();
+
+        let decoded = 0;
 
         axios.post("http://localhost:8080/login", {
             username,
             password
-        }).then(function (response) {
+        }).then(async function (response) {
             console.log('Login successful');
             const token = response.headers.authorization;
-            console.log(token);
-            sessionStorage.setItem('token', token);
+            decoded = jwtDecode(token.replace('Bearer ', ''));
+            console.log(decoded.sub);
+            sessionStorage.setItem('Token', token);
+            await getAuthenticatedUserId(decoded.sub);
             history.push("/");
         }).catch(function (error) {
+            console.log('Error inside signIn');
+            console.log(error.response.data.message);
+        });
+
+    };
+
+    const getAuthenticatedUserId = async (username) => {
+        console.log('poczatek getauthenticated')
+        axios.get("http://localhost:8080/findUserByUsername?username=".concat(username),  {
+            headers: {'Authorization': sessionStorage.getItem('Token').toString()}
+        }).then(async function (response) {
+            console.log('UserId successful');
+            const id = await response.data.id;
+            sessionStorage.setItem('UserId', id.toString());
+        }).catch(function (error) {
+            console.log('Error inside getAuthenticatedUserId');
             console.log(error.response.data.message);
         });
     };
@@ -156,7 +178,7 @@ function Login() {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-                            onClick={SignIn}
+                            onClick={signIn}
                         >
                             Login
                         </Button>
