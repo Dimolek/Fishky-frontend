@@ -35,8 +35,8 @@ function Manage() {
 
     React.useEffect(() => {
 
-        axios.defaults.headers.get['Authorization'] =  sessionStorage.getItem('Token');
-        axios.get("http://localhost:8080/findUsersDictionaries?id=".concat(sessionStorage.getItem('UserId')))
+        axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
+        axios.get("http://localhost:8080/findUsersDictionaries")
             .then(function (response) {
                 setUsersDictionaries(response.data);
                 console.log(response.data);

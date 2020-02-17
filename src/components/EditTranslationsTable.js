@@ -12,6 +12,7 @@ export default function EditTranslationsTable(props) {
     });
 
     const axios = require('axios').default;
+    axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
 
     const saveNewTranslation = newData => {
 

@@ -14,13 +14,13 @@ export default function EditDictionariesTable(props) {
     const [currentDictionaryId, setCurrentDictionaryId] = React.useState(0);
 
     const axios = require('axios').default;
+    axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
 
     const saveNewDictionary = newData => {
 
         axios.post("http://localhost:8080/addDictionary", {
             name: newData.name,
             language: newData.language,
-            userId: 2 // <--------------------------------------------------------
         }).then(function (response) {
             setState(prevState => {
                 const data = [...prevState.data];

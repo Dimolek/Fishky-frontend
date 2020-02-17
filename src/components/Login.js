@@ -89,40 +89,17 @@ function Login() {
 
     const signIn = (event) => {
 
-
-        const jwtDecode = require('jwt-decode');
         event.preventDefault();
-
-        let decoded = 0;
 
         axios.post("http://localhost:8080/login", {
             username,
             password
-        }).then(async function (response) {
+        }).then(function (response) {
             console.log('Login successful');
             const token = response.headers.authorization;
-            decoded = jwtDecode(token.replace('Bearer ', ''));
-            console.log(decoded.sub);
             sessionStorage.setItem('Token', token);
-            await getAuthenticatedUserId(decoded.sub);
             history.push("/");
         }).catch(function (error) {
-            console.log('Error inside signIn');
-            console.log(error.response.data.message);
-        });
-
-    };
-
-    const getAuthenticatedUserId = async (username) => {
-        console.log('poczatek getauthenticated')
-        axios.get("http://localhost:8080/findUserByUsername?username=".concat(username),  {
-            headers: {'Authorization': sessionStorage.getItem('Token').toString()}
-        }).then(async function (response) {
-            console.log('UserId successful');
-            const id = await response.data.id;
-            sessionStorage.setItem('UserId', id.toString());
-        }).catch(function (error) {
-            console.log('Error inside getAuthenticatedUserId');
             console.log(error.response.data.message);
         });
     };

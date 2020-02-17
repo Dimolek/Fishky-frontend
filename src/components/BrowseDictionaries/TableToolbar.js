@@ -40,6 +40,7 @@ export default function EnhancedTableToolbar(props) {
     const axios = require('axios').default;
 
     const getChosenDictionary = id => {
+        axios.defaults.headers.common['Authorization'] =  sessionStorage.getItem('Token');
         axios.get("http://localhost:8080/findDictionaryById?id=".concat(id))
             .then(function (response) {
                 shuffleArray(response.data.translations);

@@ -28,24 +28,6 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-/*function ListItemLink(props) {
-    const { icon, primary, to } = props;
-
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <Link to={to} ref={ref} {...itemProps} />),
-        [to],
-    );
-
-    return (
-        <li>
-            <ListItem button component={renderLink}>
-                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                <ListItemText primary={primary} />
-            </ListItem>
-        </li>
-    );
-}*/
-
 export default function MenuAppBar() {
     const classes = useStyles();
     const [auth, setAuth] = React.useState(true);
@@ -94,11 +76,6 @@ export default function MenuAppBar() {
                                     open={open}
                                     onClose={handleClose}
                                 >
-{/*                                    <List aria-label="main mailbox folders">
-                                        <ListItemLink to="/Practice" primary="Practice"/>
-                                        <ListItemLink to="/Manage" primary="Manage flashcards" />
-                                        <ListItemLink to="/" primary="Logout" onClick={handleClose}/>
-                                    </List>*/}
                                     <Link to='/' style={{ textDecoration: 'none', display: 'block'}}>
                                         <MenuItem onClick={handleClose}>Home</MenuItem>
                                     </Link>
