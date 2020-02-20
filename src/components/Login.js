@@ -78,11 +78,11 @@ const CssTextField = withStyles({
     },
 })(TextField);
 
-function Login() {
+function Login(props) {
     const classes = useStyles();
-
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
+    //const {setIsAuthenticated} = useAuth();
 
     const history = useHistory();
     const axios = require('axios').default;
@@ -98,6 +98,7 @@ function Login() {
             console.log('Login successful');
             const token = response.headers.authorization;
             sessionStorage.setItem('Token', token);
+            props.setIsAuthenticated(true);
             history.push("/");
         }).catch(function (error) {
             console.log(error.response.data.message);

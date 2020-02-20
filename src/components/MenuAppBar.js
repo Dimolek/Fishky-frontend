@@ -2,12 +2,9 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Typography from "@material-ui/core/Typography/Typography";
@@ -28,15 +25,20 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function MenuAppBar() {
+
+export default function MenuAppBar(props) {
     const classes = useStyles();
-    const [auth, setAuth] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
-    const handleChange = event => {
-        setAuth(event.target.checked);
+    const history = useHistory();
+
+    const logout = () => {
+        sessionStorage.removeItem("Token");
+        props.setIsAuthenticated(false);
+        history.push("/");
     };
+
 
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
@@ -48,79 +50,75 @@ export default function MenuAppBar() {
 
     return (
         <div className={classes.root}>
-            <FormGroup>
-                <FormControlLabel
-                    control={<Switch checked={auth} onChange={handleChange} aria-label="login switch" />}
-                    label={auth ? 'Logout' : 'Login'}
-                />
-            </FormGroup>
             <AppBar position="static">
                 <Toolbar className={classes.bar}>
-                        {auth && (
-                            <div>
-                                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={handleMenu}>
-                                    <MenuIcon />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={handleClose}
-                                >
-                                    <Link to='/' style={{ textDecoration: 'none', display: 'block'}}>
-                                        <MenuItem onClick={handleClose}>Home</MenuItem>
-                                    </Link>
-                                    <Link to='/Manage' style={{ textDecoration: 'none', display: 'block'}}>
-                                        <MenuItem onClick={handleClose}>Manage flashcards</MenuItem>
-                                    </Link>
-                                    <Link to='/Practice' style={{ textDecoration: 'none', display: 'block' }}>
-                                        <MenuItem onClick={handleClose}>Practice</MenuItem>
-                                    </Link>
-                                    <MenuItem onClick={handleClose}>Logout</MenuItem>
-                                </Menu>
-                            </div>
-                        )}
-                        {!auth && (
-                            <div>
-                                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={handleMenu}>
-                                    <MenuIcon />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={handleClose}
-                                >
-                                    <Link to='/' style={{ textDecoration: 'none', display: 'block'}}>
-                                        <MenuItem onClick={handleClose}>Home</MenuItem>
-                                    </Link>
-                                    <Link to='/Login' style={{ textDecoration: 'none', display: 'block'}}>
-                                        <MenuItem onClick={handleClose}>Login</MenuItem>
-                                    </Link>
-                                    <Link to='/Register' style={{ textDecoration: 'none', display: 'block'}}>
-                                        <MenuItem onClick={handleClose}>Create account</MenuItem>
-                                    </Link>
-                                </Menu>
-                            </div>
-                        )}
+                    {props.isAuthenticated && (
+                        <div>
+                            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
+                                        onClick={handleMenu}>
+                                <MenuIcon/>
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <Link to='/' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Home</MenuItem>
+                                </Link>
+                                <Link to='/Manage' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Manage flashcards</MenuItem>
+                                </Link>
+                                <Link to='/Practice' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Practice</MenuItem>
+                                </Link>
+                                <MenuItem onClick={logout}>Logout</MenuItem>
+                            </Menu>
+                        </div>
+                    )}
+                    {!props.isAuthenticated && (
+                        <div>
+                            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
+                                        onClick={handleMenu}>
+                                <MenuIcon/>
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <Link to='/' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Home</MenuItem>
+                                </Link>
+                                <Link to='/Login' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Login</MenuItem>
+                                </Link>
+                                <Link to='/Register' style={{textDecoration: 'none', display: 'block'}}>
+                                    <MenuItem onClick={handleClose}>Create account</MenuItem>
+                                </Link>
+                            </Menu>
+                        </div>
+                    )}
                     <Typography variant="h6" className={classes.content}>
                         Menu
                     </Typography>
