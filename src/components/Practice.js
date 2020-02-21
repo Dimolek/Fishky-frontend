@@ -3,6 +3,8 @@ import {makeStyles} from "@material-ui/core";
 import DictionariesTable from "./BrowseDictionaries/DictionariesTable";
 import AskUser from "./AskUser";
 import Paper from "@material-ui/core/Paper/Paper";
+import {useHistory} from "react-router-dom";
+import {logout} from "./Logout";
 
 
 const useStyles = makeStyles(theme => ({
@@ -24,13 +26,15 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function Practice() {
+function Practice(props) {
     const classes = useStyles();
     const axios = require('axios').default;
     const [usersDictionaries, setUsersDictionaries] = React.useState([]);
     const [dictionary, setDictionary] = React.useState({});
     const [isPracticing, setIsPracticing] = React.useState(false);
     const [index, setIndex] = React.useState(0);
+
+    const history = useHistory();
 
     React.useEffect(() => {
 
@@ -42,6 +46,7 @@ function Practice() {
             })
             .catch(function (error) {
                 console.log(error);
+                logout(props, history);
             });
     }, []);
 

@@ -4,6 +4,8 @@ import EditDictionariesTable from "./EditDictionariesTable";
 import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import EditTranslationsTable from "./EditTranslationsTable";
+import {useHistory} from "react-router-dom";
+import {logout} from "./Logout";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,13 +27,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function Manage() {
+function Manage(props) {
     const classes = useStyles();
     const axios = require('axios').default;
     const [usersDictionaries, setUsersDictionaries] = React.useState([]);
     const [dictionary, setDictionary] = React.useState([]);
     const [dictionariesLoaded, setDictionariesLoaded] = React.useState(false);
     const [translationsLoaded, setTranslationsLoaded] = React.useState(false);
+
+    const history = useHistory();
 
     React.useEffect(() => {
 
@@ -43,10 +47,9 @@ function Manage() {
                 setDictionariesLoaded(true);
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.response);
+                logout(props, history);
             });
-
-
     }, []);
 
     return (

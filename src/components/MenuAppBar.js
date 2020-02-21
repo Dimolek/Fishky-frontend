@@ -8,6 +8,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Typography from "@material-ui/core/Typography/Typography";
+import {logout} from "./Logout";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,13 +33,6 @@ export default function MenuAppBar(props) {
     const open = Boolean(anchorEl);
 
     const history = useHistory();
-
-    const logout = () => {
-        sessionStorage.removeItem("Token");
-        props.setIsAuthenticated(false);
-        history.push("/");
-    };
-
 
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
@@ -82,7 +76,7 @@ export default function MenuAppBar(props) {
                                 <Link to='/Practice' style={{textDecoration: 'none', display: 'block'}}>
                                     <MenuItem onClick={handleClose}>Practice</MenuItem>
                                 </Link>
-                                <MenuItem onClick={logout}>Logout</MenuItem>
+                                <MenuItem onClick={e => { logout(props, history) }}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
