@@ -52,6 +52,10 @@ const useStyles = makeStyles(theme => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
         backgroundColor: "#D13434"
+    },
+    errorMessage: {
+        fontWeight: 600,
+        color: 'red'
     }
 }));
 
@@ -79,25 +83,80 @@ const CssTextField = withStyles({
 
 function Register() {
 
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [confirmPassword, setConfirmPassword] = React.useState('');
+    const [username, setUsername] = React.useState(null);
+    const [password, setPassword] = React.useState(null);
+    const [confirmPassword, setConfirmPassword] = React.useState(null);
+    const [errorMessages, setErrorMessages] = React.useState({
+        'username': '',
+        'password': '',
+        'confirmPassword': ''
+    });
+
+    const handleChange = e => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        let formErrors = { ...errorMessages };
+
+        switch (name) {
+            case "username":
+                formErrors.username =
+                    (value.length < 3 || value.length > 16) ? "Enter between 3 and 16 characters" : "";
+                setUsername(value);
+                break;
+            case "password":
+                formErrors.password =
+                    value.length < 8 ? "Password should be minimum 8 characters long" : "";
+                setPassword(value);
+                break;
+            case "confirmPassword":
+                formErrors.confirmPassword =
+                    value.length < 8 ? "Password should be minimum 8 characters long" : "";
+                setConfirmPassword(value);
+                break;
+            default:
+                break;
+        }
+        setErrorMessages(formErrors);
+    };
+
+    const formValid = (errs) => {
+        let valid = true;
+
+        Object.values(errs).forEach(val => {
+            val.length > 0 && (valid = false);
+        });
+        if(!username || !password || !confirmPassword) {
+            valid = false;
+        }
+        if(password !== confirmPassword) {
+            valid = false;
+        }
+
+        return valid;
+    };
+
 
     const saveNewUser = (event) => {
-
-        const axios = require('axios').default;
         event.preventDefault();
 
-        axios.post("http://localhost:8080/addUser", {
-            username,
-            password,
-            confirmPassword
-        }).then(function (response) {
-            console.log('Registration successful');
-            history.push("/Login");
-        }).catch(function (error) {
-            console.log(error.response.data.message);
-        });
+        if(formValid(errorMessages)) {
+            const axios = require('axios').default;
+            event.preventDefault();
+
+            axios.post("http://localhost:8080/addUser", {
+                username,
+                password,
+                confirmPassword
+            }).then(function (response) {
+                console.log('Registration successful');
+                history.push("/Login");
+            }).catch(function (error) {
+                console.log(error.response.data.message);
+            });
+        } else {
+            //handle if submitted form wasn't correct (e.g. passwords don't match)
+            console.log("Error submitting form");
+        }
     };
 
     const classes = useStyles();
@@ -127,10 +186,11 @@ function Register() {
                                     id="username"
                                     label="Username"
                                     autoFocus
-                                    onChange={e => {
-                                        setUsername(e.target.value)
-                                    }}
+                                    onChange={handleChange}
                                 />
+                                {errorMessages.username.length > 0 && (
+                                    <span className={classes.errorMessage}>{errorMessages.username}</span>
+                                )}
                             </Grid>
                             <Grid item xs={12}>
                                 <CssTextField
@@ -142,10 +202,11 @@ function Register() {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    onChange={e => {
-                                        setPassword(e.target.value)
-                                    }}
+                                    onChange={handleChange}
                                 />
+                                {errorMessages.password.length > 0 && (
+                                    <span className={classes.errorMessage}>{errorMessages.password}</span>
+                                )}
                             </Grid>
                             <Grid item xs={12}>
                                 <CssTextField
@@ -153,14 +214,15 @@ function Register() {
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    name="confirmpassword"
+                                    name="confirmPassword"
                                     label="Confirm Password"
                                     type="password"
-                                    id="confirmpassword"
-                                    onChange={e => {
-                                        setConfirmPassword(e.target.value)
-                                    }}
+                                    id="confirmpPssword"
+                                    onChange={handleChange}
                                 />
+                                {errorMessages.confirmPassword.length > 0 && (
+                                    <span className={classes.errorMessage}>{errorMessages.confirmPassword}</span>
+                                )}
                             </Grid>
                         </Grid>
                         <Button
