@@ -6,6 +6,8 @@ import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import CheckIcon from '@material-ui/icons/Check';
 import React from "react";
+import Notify from "../Notify";
+import {toast} from "react-toastify";
 
 const useToolbarStyles = makeStyles(theme => ({
     root: {
@@ -36,15 +38,20 @@ export function shuffleArray(array) {
 
 export default function EnhancedTableToolbar(props) {
     const classes = useToolbarStyles();
-    const { selected, dictionaries } = props;
+    const {selected, dictionaries} = props;
     const axios = require('axios').default;
 
     const getChosenDictionary = id => {
-        axios.defaults.headers.common['Authorization'] =  sessionStorage.getItem('Token');
+        axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
         axios.get("http://localhost:8080/findDictionaryById?id=".concat(id))
             .then(function (response) {
-                shuffleArray(response.data.translations);
-                props.chooseDictionary(response.data, true);
+                if (response.data.translations.length > 0) {
+                    shuffleArray(response.data.translations);
+                    props.chooseDictionary(response.data, true);
+                } else {
+                    Notify(toast.TYPE.ERROR, "This dictionary is empty!");
+                    props.chooseDictionary(response.data, false);
+                }
                 console.log(response.data);
             })
             .catch(function (error) {
@@ -76,7 +83,7 @@ export default function EnhancedTableToolbar(props) {
             {selected !== 'none' ? (
                 <Tooltip title="Click to practice">
                     <IconButton aria-label="execute" onClick={handleExecute}>
-                        <CheckIcon />
+                        <CheckIcon/>
                     </IconButton>
                 </Tooltip>
             ) : (
