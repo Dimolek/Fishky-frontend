@@ -49,7 +49,7 @@ export default function EnhancedTableToolbar(props) {
                     shuffleArray(response.data.translations);
                     props.chooseDictionary(response.data, true);
                 } else {
-                    Notify(toast.TYPE.ERROR, "This dictionary is empty!");
+                    Notify(toast.TYPE.INFO, "This dictionary is empty!");
                     props.chooseDictionary(response.data, false);
                 }
                 console.log(response.data);
