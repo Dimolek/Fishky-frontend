@@ -1,5 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import {toast} from 'react-toastify';
+import Notify from "./Notify";
 
 export default function EditDictionariesTable(props) {
 
@@ -11,25 +13,65 @@ export default function EditDictionariesTable(props) {
         data: props.dictionaries
     });
 
+    const [errorMessages, setErrorMessages] = React.useState({
+        'emptyName': '',
+        'emptyLanguage': '',
+    });
+
     const [currentDictionaryId, setCurrentDictionaryId] = React.useState(0);
 
     const axios = require('axios').default;
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
 
+    const fieldsValid = (data, errs) => {
+        let valid = true;
+        let errorsCopy = errs;
+
+        if (!data.name) {
+            errorsCopy.emptyName = 'Name cannot be empty';
+            valid = false;
+        } else if(data.name.length > 45) {
+            errorsCopy.emptyName = 'Name cannot be longer than 45 characters';
+            valid = false;
+        } else {
+            errorsCopy.emptyName = '';
+        }
+
+        if (!data.language) {
+            errorsCopy.emptyLanguage = 'Language cannot be empty';
+            valid = false;
+        } else if(data.language.length > 45) {
+            errorsCopy.emptyLanguage = 'Language cannot be longer than 45 characters';
+            valid = false;
+        } else {
+            errorsCopy.emptyLanguage = '';
+        }
+
+        setErrorMessages(errorsCopy);
+        return valid;
+    };
+
     const saveNewDictionary = newData => {
 
-        axios.post("http://localhost:8080/addDictionary", {
-            name: newData.name,
-            language: newData.language,
-        }).then(function (response) {
-            setState(prevState => {
-                const data = [...prevState.data];
-                data.push(response.data);
-                return {...prevState, data};
+        if (fieldsValid(newData, errorMessages)) {
+            axios.post("http://localhost:8080/addDictionary", {
+                name: newData.name,
+                language: newData.language,
+            }).then(function (response) {
+                setState(prevState => {
+                    const data = [...prevState.data];
+                    data.push(response.data);
+                    return {...prevState, data};
+                });
+            }).catch(function (error) {
+                Notify(toast.TYPE.ERROR, "Cannot save data");
+                console.log(error);
             });
-        }).catch(function (error) {
-            console.log(error);
-        });
+        } else {
+            Object.values(errorMessages).forEach(val => {
+                val.length > 0 && (Notify(toast.TYPE.ERROR, val));
+            });
+        }
     };
 
     const deleteDictionary = oldData => {
@@ -37,7 +79,7 @@ export default function EditDictionariesTable(props) {
         axios.post("http://localhost:8080/deleteDictionaryById", {
             id: oldData.id
         }).then(function (response) {
-            if(currentDictionaryId === oldData.id) props.setTranslationsLoaded(false);
+            if (currentDictionaryId === oldData.id) props.setTranslationsLoaded(false);
             console.log(response.data);
         }).catch(function (error) {
             console.log(error);
@@ -52,7 +94,7 @@ export default function EditDictionariesTable(props) {
             language: newData.language,
             userId: newData.userId
         }).then(function (response) {
-            if(currentDictionaryId === newData.id) props.setTranslationsLoaded(false);
+            if (currentDictionaryId === newData.id) props.setTranslationsLoaded(false);
             console.log(response.data, 'modify pierwszy then')
         }).catch(function (error) {
             console.log(error);

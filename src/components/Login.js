@@ -11,6 +11,8 @@ import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
 import {useHistory} from "react-router-dom";
+import Notify from "./Notify";
+import {toast} from 'react-toastify';
 
 
 const useStyles = makeStyles(theme => ({
@@ -82,7 +84,7 @@ function Login(props) {
     const classes = useStyles();
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
-    //const {setIsAuthenticated} = useAuth();
+
 
     const history = useHistory();
     const axios = require('axios').default;
@@ -95,12 +97,13 @@ function Login(props) {
             username,
             password
         }).then(function (response) {
-            console.log('Login successful');
+            Notify(toast.TYPE.SUCCESS, "Welcome!");
             const token = response.headers.authorization;
             sessionStorage.setItem('Token', token);
             props.setIsAuthenticated(true);
             history.push("/");
         }).catch(function (error) {
+            Notify(toast.TYPE.ERROR, error.response.data.message);
             console.log(error.response.data.message);
         });
     };

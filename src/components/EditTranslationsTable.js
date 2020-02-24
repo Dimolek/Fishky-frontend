@@ -1,5 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import Notify from "./Notify";
+import {toast} from "react-toastify";
 
 export default function EditTranslationsTable(props) {
 
@@ -11,24 +13,65 @@ export default function EditTranslationsTable(props) {
         data: props.dictionary.translations
     });
 
+    const [errorMessages, setErrorMessages] = React.useState({
+        'emptyWord': '',
+        'emptyTranslation': '',
+    });
+
+    const fieldsValid = (data, errs) => {
+        let valid = true;
+        let errorsCopy = errs;
+
+        if (!data.word) {
+            errorsCopy.emptyWord = 'Word cannot be empty';
+            valid = false;
+        } else if(data.word.length > 45) {
+            errorsCopy.emptyWord = 'Word cannot be longer than 45 characters';
+            valid = false;
+        } else {
+            errorsCopy.emptyWord = '';
+        }
+
+        if (!data.translated) {
+            errorsCopy.emptyTranslation = 'Translation cannot be empty';
+            valid = false;
+        } else if(data.translated.length > 45) {
+            errorsCopy.emptyTranslation = 'Translation cannot be longer than 45 characters';
+            valid = false;
+        } else {
+            errorsCopy.emptyTranslation = '';
+        }
+
+        setErrorMessages(errorsCopy);
+        return valid;
+    };
+
     const axios = require('axios').default;
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('Token');
 
     const saveNewTranslation = newData => {
 
-        axios.post("http://localhost:8080/addTranslation", {
-            word: newData.word,
-            translated: newData.translated,
-            dictionaryId: props.dictionary.id
-        }).then(function (response) {
-            setState(prevState => {
-                const data = [...prevState.data];
-                data.push(response.data);
-                return {...prevState, data};
+        if (fieldsValid(newData, errorMessages)) {
+            axios.post("http://localhost:8080/addTranslation", {
+                word: newData.word,
+                translated: newData.translated,
+                dictionaryId: props.dictionary.id
+            }).then(function (response) {
+                setState(prevState => {
+                    const data = [...prevState.data];
+                    data.push(response.data);
+                    return {...prevState, data};
+                });
+            }).catch(function (error) {
+                Notify(toast.TYPE.ERROR, "Cannot save data");
+                console.log(error);
             });
-        }).catch(function (error) {
-            console.log(error);
-        });
+        } else {
+            Object.values(errorMessages).forEach(val => {
+                val.length > 0 && (Notify(toast.TYPE.ERROR, val));
+            });
+        }
+
     };
 
     const deleteTranslation = oldData => {
