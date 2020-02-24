@@ -4,7 +4,7 @@ import DictionariesTable from "./BrowseDictionaries/DictionariesTable";
 import AskUser from "./AskUser";
 import Paper from "@material-ui/core/Paper/Paper";
 import {useHistory} from "react-router-dom";
-import {logout} from "./Logout";
+import {logout} from "./user/Logout";
 
 
 const useStyles = makeStyles(theme => ({

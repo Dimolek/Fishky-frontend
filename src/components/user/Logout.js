@@ -1,5 +1,5 @@
 import {toast} from 'react-toastify';
-import Notify from "./Notify";
+import Notify from "../Notify";
 
 export const logout = (props, history) => {
     sessionStorage.removeItem("Token");

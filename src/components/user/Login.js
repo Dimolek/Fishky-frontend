@@ -11,7 +11,7 @@ import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
 import {useHistory} from "react-router-dom";
-import Notify from "./Notify";
+import Notify from "../Notify";
 import {toast} from 'react-toastify';
 
 

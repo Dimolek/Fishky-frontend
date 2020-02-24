@@ -4,8 +4,8 @@ import {BrowserRouter, Redirect, Route} from 'react-router-dom';
 import App from "./app/App";
 import Manage from "./Manage";
 import Practice from "./Practice";
-import Register from "./Register";
-import Login from "./Login";
+import Register from "./user/Register";
+import Login from "./user/Login";
 
 export default function Routes() {
 

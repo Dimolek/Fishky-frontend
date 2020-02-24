@@ -13,7 +13,7 @@ import {Link, useHistory} from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Notify from "./Notify";
+import Notify from "../Notify";
 
 const useStyles = makeStyles(theme => ({
     root: {

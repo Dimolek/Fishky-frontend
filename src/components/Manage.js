@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import EditTranslationsTable from "./EditTranslationsTable";
 import {useHistory} from "react-router-dom";
-import {logout} from "./Logout";
+import {logout} from "./user/Logout";
 
 
 const useStyles = makeStyles(theme => ({

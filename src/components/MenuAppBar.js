@@ -8,7 +8,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Typography from "@material-ui/core/Typography/Typography";
-import {logout} from "./Logout";
+import {logout} from "./user/Logout";
 
 const useStyles = makeStyles(theme => ({
     root: {
