@@ -11,6 +11,9 @@ import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {Link, useHistory} from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Notify from "./Notify";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -89,7 +92,9 @@ function Register() {
     const [errorMessages, setErrorMessages] = React.useState({
         'username': '',
         'password': '',
-        'confirmPassword': ''
+        'confirmPassword': '',
+        'emptyField': '',
+        'passwordMatch': ''
     });
 
     const handleChange = e => {
@@ -121,17 +126,27 @@ function Register() {
 
     const formValid = (errs) => {
         let valid = true;
+        let errorsCopy = errs;
 
         Object.values(errs).forEach(val => {
             val.length > 0 && (valid = false);
         });
         if(!username || !password || !confirmPassword) {
+            errorsCopy.emptyField = 'Field cannot be empty';
             valid = false;
-        }
-        if(password !== confirmPassword) {
-            valid = false;
+        } else {
+            errorsCopy.emptyField = '';
         }
 
+
+        if(password !== confirmPassword) {
+            errorsCopy.passwordMatch = 'Passwords don\'t match';
+            valid = false;
+        } else {
+            errorsCopy.passwordMatch = '';
+        }
+
+        setErrorMessages(errorsCopy);
         return valid;
     };
 
@@ -148,14 +163,15 @@ function Register() {
                 password,
                 confirmPassword
             }).then(function (response) {
-                console.log('Registration successful');
+                Notify(toast.TYPE.SUCCESS, "Account created successfully!")
                 history.push("/Login");
             }).catch(function (error) {
                 console.log(error.response.data.message);
             });
         } else {
-            //handle if submitted form wasn't correct (e.g. passwords don't match)
-            console.log("Error submitting form");
+            Object.values(errorMessages).forEach(val => {
+                val.length > 0 && (Notify(toast.TYPE.ERROR, val));
+            });
         }
     };
 
@@ -217,7 +233,7 @@ function Register() {
                                     name="confirmPassword"
                                     label="Confirm Password"
                                     type="password"
-                                    id="confirmpPssword"
+                                    id="confirmPassword"
                                     onChange={handleChange}
                                 />
                                 {errorMessages.confirmPassword.length > 0 && (
